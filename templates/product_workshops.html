@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Управление цехами - {{ product.name }}{% endblock %}
+{% block header %}Управление цехами: {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+        <p><strong>Артикул:</strong> {{ product.article }}</p>
+        <p><strong>Тип:</strong> {{ product.product_type_name }}</p>
+        <p><strong>Материал:</strong> {{ product.main_material_name }}</p>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>Назначенные цеха</h3>
+        {% if available_workshops %}
+        <button class="btn" onclick="showForm()">+ Добавить цех</button>
+        {% endif %}
+    </div>
+
+    <div id="addForm" style="display: none; background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+        <h4>Добавление цеха</h4>
+        <form method="POST" action="{{ url_for('add_product_workshop', product_id=product.id) }}">
+            <div class="form-group">
+                <label>Цех:</label>
+                <select name="workshop_id" required>
+                    <option value="">-- Выберите цех --</option>
+                    {% for workshop in available_workshops %}
+                    <option value="{{ workshop.id }}">{{ workshop.name }} ({{ workshop.type }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Время (часов):</label>
+                <input type="number" name="hours" step="0.1" min="0.1" required 
+                       placeholder="Например: 2.5">
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="hideForm()">Отмена</button>
+                <button type="submit" class="btn">Добавить</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Цех</th>
+                    <th>Тип</th>
+                    <th>Человек</th>
+                    <th>Время (ч)</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for workshop in workshops %}
+                <tr>
+                    <td>{{ workshop.name }}</td>
+                    <td>{{ workshop.type }}</td>
+                    <td>{{ workshop.employees_count }}</td>
+                    <td>
+                        <span id="hours_{{ workshop.id }}">{{ "%.1f"|format(workshop.hours) }}</span>
+                        
+                        <div id="edit_{{ workshop.id }}" style="display: none;">
+                            <form method="POST" action="{{ url_for('update_workshop_hours', product_id=product.id, workshop_id=workshop.id) }}" 
+                                  style="display: flex; gap: 5px;">
+                                <input type="number" name="hours" step="0.1" min="0.1" 
+                                       value="{{ workshop.hours }}" style="width: 80px;">
+                                <button type="submit" class="btn" style="padding: 5px 10px;">✓</button>
+                                <button type="button" class="btn btn-secondary" style="padding: 5px 10px;" 
+                                        onclick="cancelEdit({{ workshop.id }})">✗</button>
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;" 
+                                    onclick="showEdit({{ workshop.id }})">✏️</button>
+                            <form method="POST" action="{{ url_for('remove_product_workshop', product_id=product.id, workshop_id=workshop.id) }}" 
+                                  style="display: inline;" 
+                                  onsubmit="return confirm('Удалить цех?');">
+                                <button type="submit" class="btn btn-secondary" style="padding: 5px 10px;">🗑️</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">
+                        Нет назначенных цехов
+                        {% if available_workshops %}
+                        <div style="margin-top: 10px;">
+                            <button class="btn" onclick="showForm()">Добавить цех</button>
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="total-time">
+        Общее время: <span>{{ total_time }} ч</span>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <a href="{{ url_for('view_workshops', product_id=product.id) }}" class="btn btn-secondary">
+            Режим просмотра
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
+
+<script>
+    function showForm() {
+        document.getElementById('addForm').style.display = 'block';
+    }
+    
+    function hideForm() {
+        document.getElementById('addForm').style.display = 'none';
+    }
+    
+    function showEdit(id) {
+        document.getElementById('hours_' + id).style.display = 'none';
+        document.getElementById('edit_' + id).style.display = 'inline';
+    }
+    
+    function cancelEdit(id) {
+        document.getElementById('hours_' + id).style.display = 'inline';
+        document.getElementById('edit_' + id).style.display = 'none';
+    }
+</script>
+{% endblock %}

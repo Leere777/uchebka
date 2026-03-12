@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Калькулятор сырья{% endblock %}
+{% block header %}Калькулятор расчета сырья{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="margin-bottom: 20px;">
+        <h3>Расчет количества сырья для производства</h3>
+        <p style="color: #666;">Заполните все поля для расчета необходимого количества материала с учетом потерь</p>
+    </div>
+
+    <div class="form-container" style="max-width: 600px;">
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label>Тип продукции *</label>
+                <select id="product_type_id" required>
+                    <option value="">-- Выберите тип продукции --</option>
+                    {% for type in product_types %}
+                    <option value="{{ type.id }}">{{ type.name }} (коэф. {{ type.coefficient }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Тип материала *</label>
+                <select id="material_type_id" required>
+                    <option value="">-- Выберите тип материала --</option>
+                    {% for material in material_types %}
+                    <option value="{{ material.id }}">{{ material.name }} (потери {{ material.loss_percent * 100 }}%)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Количество продукции (шт) *</label>
+                <input type="number" id="product_quantity" min="1" step="1" required 
+                       placeholder="Например: 10">
+            </div>
+
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <label>Параметр 1 (длина/ширина) *</label>
+                    <input type="number" id="param1" step="0.01" min="0.01" required 
+                           placeholder="Например: 2.5">
+                </div>
+                <div style="flex: 1;">
+                    <label>Параметр 2 (высота/глубина) *</label>
+                    <input type="number" id="param2" step="0.01" min="0.01" required 
+                           placeholder="Например: 1.8">
+                </div>
+            </div>
+
+            <div style="margin: 30px 0;">
+                <button type="button" class="btn" onclick="calculate()" style="width: 100%;">Рассчитать</button>
+            </div>
+        </form>
+
+        <div id="result" style="display: none; background-color: #f0f8ff; padding: 20px; border-radius: 5px; margin-top: 20px;">
+            <h4 style="margin-bottom: 15px;">Результат расчета:</h4>
+            <div id="result_content"></div>
+        </div>
+
+        <div id="history" style="margin-top: 30px;">
+            <h4>История расчетов</h4>
+            <div id="history_list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let calculationHistory = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+
+    function calculate() {
+        const product_type_id = document.getElementById('product_type_id').value;
+        const material_type_id = document.getElementById('material_type_id').value;
+        const product_quantity = document.getElementById('product_quantity').value;
+        const param1 = document.getElementById('param1').value;
+        const param2 = document.getElementById('param2').value;
+
+        if (!product_type_id || !material_type_id || !product_quantity || !param1 || !param2) {
+            alert('Пожалуйста, заполните все поля');
+            return;
+        }
+
+        if (product_quantity <= 0 || param1 <= 0 || param2 <= 0) {
+            alert('Все числовые значения должны быть положительными');
+            return;
+        }
+
+        fetch('/api/calculate-material', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                product_type_id: parseInt(product_type_id),
+                material_type_id: parseInt(material_type_id),
+                product_quantity: parseInt(product_quantity),
+                param1: parseFloat(param1),
+                param2: parseFloat(param2)
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const productType = document.querySelector('#product_type_id option:checked').text;
+                const materialType = document.querySelector('#material_type_id option:checked').text;
+                
+                const resultHtml = `
+                    <p><strong>Тип продукции:</strong> ${productType}</p>
+                    <p><strong>Тип материала:</strong> ${materialType}</p>
+                    <p><strong>Количество продукции:</strong> ${product_quantity} шт</p>
+                    <p><strong>Параметры:</strong> ${param1} × ${param2}</p>
+                    <p style="font-size: 24px; color: #3498db; margin-top: 15px;">
+                        <strong>Требуется сырья: ${data.result} м²</strong>
+                    </p>
+                `;
+                
+                document.getElementById('result_content').innerHTML = resultHtml;
+                document.getElementById('result').style.display = 'block';
+
+                const historyItem = {
+                    date: new Date().toLocaleString(),
+                    productType: productType.split(' ')[0],
+                    materialType: materialType.split(' ')[0],
+                    quantity: product_quantity,
+                    result: data.result
+                };
+                
+                calculationHistory.unshift(historyItem);
+                if (calculationHistory.length > 5) calculationHistory.pop();
+                localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+                
+                updateHistory();
+            } else {
+                alert('Ошибка при расчете. Проверьте корректность введенных данных.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Произошла ошибка при расчете');
+        });
+    }
+
+    function updateHistory() {
+        const historyList = document.getElementById('history_list');
+        
+        if (calculationHistory.length === 0) {
+            historyList.innerHTML = '<p style="color: #666;">Нет сохраненных расчетов</p>';
+            return;
+        }
+        
+        let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+        calculationHistory.forEach(item => {
+            html += `
+                <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; border-left: 3px solid #3498db;">
+                    <small style="color: #666;">${item.date}</small>
+                    <p style="margin: 5px 0;">${item.productType} · ${item.materialType} · ${item.quantity} шт</p>
+                    <strong style="color: #3498db;">${item.result} м²</strong>
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        historyList.innerHTML = html;
+    }
+
+    updateHistory();
+</script>
+{% endblock %}

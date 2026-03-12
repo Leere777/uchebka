@@ -1,0 +1,336 @@
+/* static/style.css - в соответствии с руководством по стилю */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    background-color: #FFFFFF;
+    color: #333333;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Шапка */
+header {
+    background-color: #D2DFFF;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+h1 {
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    font-size: 24px;
+    color: #333333;
+    font-weight: normal;
+}
+
+/* Навигация */
+.nav-links {
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #D2DFFF;
+}
+
+.nav-links a {
+    color: #355CBD;
+    text-decoration: none;
+    margin-right: 20px;
+    padding: 5px 10px;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    transition: all 0.3s;
+    border-radius: 3px;
+}
+
+.nav-links a:hover {
+    background-color: #D2DFFF;
+    color: #355CBD;
+}
+
+/* Карточки */
+.card {
+    background-color: #FFFFFF;
+    border: 1px solid #D2DFFF;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+h2, h3, h4 {
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    color: #333333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Кнопки */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #355CBD;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #2a4a9e;
+}
+
+.btn-secondary {
+    background-color: #D2DFFF;
+    color: #333333;
+}
+
+.btn-secondary:hover {
+    background-color: #b0c4ff;
+    color: #333333;
+}
+
+/* Таблицы */
+.table-container {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+}
+
+th {
+    background-color: #D2DFFF;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #333333;
+    border: 1px solid #D2DFFF;
+}
+
+td {
+    padding: 10px 12px;
+    border: 1px solid #D2DFFF;
+}
+
+tr:hover {
+    background-color: #F5F8FF;
+}
+
+/* Формы */
+.form-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    padding: 25px;
+    border-radius: 5px;
+    border: 1px solid #D2DFFF;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    font-weight: 600;
+    color: #333333;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D2DFFF;
+    border-radius: 3px;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #355CBD;
+    box-shadow: 0 0 5px rgba(53, 92, 189, 0.3);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Сообщения */
+.alert {
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+}
+
+.alert-success {
+    background-color: #D2DFFF;
+    color: #333333;
+    border-left: 4px solid #355CBD;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+.alert-warning {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border-left: 4px solid #f57c00;
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border-left: 4px solid #1565c0;
+}
+
+/* Бейджи */
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+}
+
+.badge-success {
+    background-color: #D2DFFF;
+    color: #333333;
+    border: 1px solid #355CBD;
+}
+
+.badge-warning {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border: 1px solid #f57c00;
+}
+
+/* Общее время */
+.total-time {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #D2DFFF;
+    border-radius: 3px;
+    text-align: right;
+    font-family: 'Candara', 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+}
+
+.total-time span {
+    font-weight: bold;
+    color: #355CBD;
+    font-size: 20px;
+}
+
+/* Горизонтальная форма для добавления/редактирования */
+.horizontal-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border: 1px solid #D2DFFF;
+    border-radius: 5px;
+}
+
+.horizontal-form .form-group {
+    flex: 1 1 auto;
+    min-width: 120px;
+    margin-bottom: 0;
+}
+
+.horizontal-form label {
+    font-size: 12px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+}
+
+.horizontal-form input,
+.horizontal-form select {
+    width: 100%;
+    padding: 8px;
+}
+
+.horizontal-form .form-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .logo-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .horizontal-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .horizontal-form .form-actions {
+        margin-left: 0;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    th, td {
+        padding: 5px;
+        font-size: 12px;
+    }
+}

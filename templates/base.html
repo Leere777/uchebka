@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Компания Комфорт{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="/static/Комфорт.ico">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="/static/Комфорт.png" alt="Компания Комфорт" class="logo">
+                <h1>{% block header %}Система управления продукцией{% endblock %}</h1>
+            </div>
+        </header>
+
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Продукция</a>
+            <a href="{{ url_for('workshops_list') }}">Все цеха</a>
+            <a href="{{ url_for('calculator') }}">Калькулятор сырья</a>
+            {% if request.endpoint != 'index' and request.endpoint != 'workshops_list' and request.endpoint != 'calculator' %}
+            <a href="javascript:history.back()">Назад</a>
+            {% endif %}
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

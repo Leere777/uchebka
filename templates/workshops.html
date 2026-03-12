@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Просмотр цехов - {{ product.name }}{% endblock %}
+{% block header %}Просмотр цехов: {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+        <p><strong>Артикул:</strong> {{ product.article }}</p>
+        <p><strong>Тип:</strong> {{ product.product_type_name }}</p>
+        <p><strong>Материал:</strong> {{ product.main_material_name }}</p>
+        <p><strong>Стоимость:</strong> {{ "%.2f"|format(product.min_price) }} ₽</p>
+    </div>
+
+    <h3>Технологический процесс</h3>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Название цеха</th>
+                    <th>Тип цеха</th>
+                    <th>Кол-во человек</th>
+                    <th>Время (ч)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for workshop in workshops %}
+                <tr>
+                    <td>{{ workshop.name }}</td>
+                    <td>{{ workshop.type }}</td>
+                    <td>{{ workshop.employees_count }}</td>
+                    <td>{{ "%.1f"|format(workshop.hours) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">Для продукции не назначены цеха</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="total-time">
+        Общее время изготовления: <span>{{ total_time }} ч</span>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <a href="{{ url_for('manage_product_workshops', product_id=product.id) }}" class="btn">
+            Управление цехами
+        </a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Назад к списку</a>
+    </div>
+</div>
+{% endblock %}

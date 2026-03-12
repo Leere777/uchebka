@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Список цехов{% endblock %}
+{% block header %}Список цехов производства{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="margin-bottom: 20px;">
+        <h2>Все цеха</h2>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Название цеха</th>
+                    <th>Тип цеха</th>
+                    <th>Количество человек</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for workshop in workshops %}
+                <tr>
+                    <td><strong>{{ workshop.name }}</strong></td>
+                    <td>{{ workshop.type }}</td>
+                    <td>{{ workshop.employees_count }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center;">Нет данных о цехах</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; padding: 15px; background-color: #f9f9f9; border-radius: 5px;">
+        <h3>Общая статистика</h3>
+        <p><strong>Всего цехов:</strong> {{ workshops|length }}</p>
+        <p><strong>Общее количество сотрудников:</strong> 
+            {{ workshops|sum(attribute='employees_count') }}
+        </p>
+    </div>
+
+    {% if workshops %}
+    <div style="margin-top: 30px;">
+        <h3>Статистика по типам цехов</h3>
+        {% set types = {} %}
+        {% for workshop in workshops %}
+            {% if workshop.type in types %}
+                {% set _ = types.update({workshop.type: types[workshop.type] + 1}) %}
+            {% else %}
+                {% set _ = types.update({workshop.type: 1}) %}
+            {% endif %}
+        {% endfor %}
+        
+        <table style="width: 50%;">
+            <thead>
+                <tr>
+                    <th>Тип цеха</th>
+                    <th>Количество</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type, count in types.items() %}
+                <tr>
+                    <td>{{ type }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 30px;">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">На главную</a>
+    </div>
+</div>
+{% endblock %}
